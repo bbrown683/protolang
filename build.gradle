@@ -1,0 +1,17 @@
+apply plugin: "antlr"
+apply plugin: "java"
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr "org.antlr:antlr4:4.7.2"
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-long-messages", "-package", "io.github.bbrown683.spark.antlr4"]
+}
