@@ -3,30 +3,42 @@ grammar Spark;
 translationUnit : declaration EOF;
 
 declaration : (annotationDeclaration
+    | enumDeclaration
     | functionDeclaration 
     | importDeclaration 
     | objectDeclaration
     | packageDeclaration)+;
 
-functionDeclaration : LET IDENTIFIER (IDENTIFIER)* ARROW? EQUALS;
-importDeclaration : IMPORT (IDENTIFIER PERIOD)* IDENTIFIER;
-objectDeclaration : accessModifier objectType IDENTIFIER constructorDeclaration? EQUALS;
-packageDeclaration : PACKAGE (IDENTIFIER PERIOD)* IDENTIFIER;
-variableDeclaration : accessModifier IDENTIFIER IDENTIFIER;
-constructorDeclaration : LPAREN (annotationDeclaration* IDENTIFIER COLON IDENTIFIER)* RPAREN;
 annotationDeclaration : AT IDENTIFIER;
 
+enumDeclaration : accessModifier ENUM IDENTIFIER EQUALS (PIPE? enumField) (PIPE enumField)*;
+enumField : IDENTIFIER (LPAREN IDENTIFIER RPAREN)?;
+
+functionDeclaration : LET IDENTIFIER (IDENTIFIER)* ARROW? EQUALS;
+
+objectDeclaration : accessModifier objectType IDENTIFIER constructorDeclaration? EQUALS objectBody;
+objectBody : objectMemberDeclaration*;
+objectMemberDeclaration : accessModifier THIS PERIOD IDENTIFIER;
+
+variableDeclaration : accessModifier IDENTIFIER IDENTIFIER;
+
+constructorDeclaration : LPAREN (annotationDeclaration* IDENTIFIER COLON IDENTIFIER)* RPAREN;
+
+importDeclaration : IMPORT path;
+packageDeclaration : PACKAGE path;
+path : (IDENTIFIER PERIOD)* IDENTIFIER;
+
 statement : 
-    | FOR expression IN statement
-    | IF expression THEN (ELSE statement)?
-    | MATCH expression WITH statement
+    | FOR forExpression IN statement
+    | IF expression THEN statement (ELSE IF expression)* (ELSE statement)?
     | WHILE expression DO statement;
+
+forExpression :
+	| IDENTIFIER ':' IDENTIFIER;
 
 expression :
     | expression symbol=(ASTERISK | SLASH | PERCENT) expression
     | expression symbol=(PLUS | HYPHEN) expression;
-
-matchBlock : PIPE IDENTIFIER ARROW;
 
 primitive : 
     | BOOLEAN
@@ -39,13 +51,22 @@ primitive :
     | SHORT;
 
 accessModifier : PUBLIC | PRIVATE | PROTECTED;
+
 objectType : OBJECT | INTERFACE;
+
+literal : 
+	| INTEGER_LITERAL
+	| STRING_LITERAL;
+
+STRING_LITERAL : '"' ~["\\\r\n] '"';
+INTEGER_LITERAL : [0-9]+;
 
 // Keywords
 ANNOTATION : 'annotation';
-CATCH : 'catch' ;
-DO : 'do' ;
-ELSE : 'else' ;
+CATCH : 'catch';
+DO : 'do';
+ELSE : 'else';
+ENUM : 'enum';
 FOR : 'for';
 IF : 'if';
 IN : 'in';
@@ -60,6 +81,7 @@ PRIVATE : 'private';
 PROTECTED : 'protected';
 PUBLIC : 'public';
 THEN : 'then';
+THIS : 'this';
 TRY : 'try';
 WHILE : 'while';
 WITH : 'with';

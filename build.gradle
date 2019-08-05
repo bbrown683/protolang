@@ -1,7 +1,9 @@
 apply plugin: "antlr"
+apply plugin: "application"
+apply plugin: "eclipse"
 apply plugin: "java"
 
-sourceCompatibility = 1.8
+mainClassName = "io.github.bbrown683.spark.Main"
 
 repositories {
     mavenCentral()
@@ -9,9 +11,11 @@ repositories {
 
 dependencies {
     antlr "org.antlr:antlr4:4.7.2"
+    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+    compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.10.0'
 }
 
 generateGrammarSource {
     maxHeapSize = "64m"
-    arguments += ["-visitor", "-long-messages", "-package", "io.github.bbrown683.spark.antlr4"]
+    arguments += ["-visitor", "-no-listener", "-long-messages", "-package", "io.github.bbrown683.spark.antlr4"]
 }
