@@ -12,9 +12,15 @@ dependencies {
     antlr "org.antlr:antlr4:4.8"
     implementation "commons-cli:commons-cli:1.4"
     implementation "net.bytebuddy:byte-buddy:1.10.0"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.6.0"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.6.0"
 }
 
 generateGrammarSource {
     maxHeapSize = "64m"
     arguments += ["-visitor", "-no-listener", "-long-messages", "-package", "io.github.bbrown683.spark.antlr4"]
+}
+
+test {
+    useJUnitPlatform()
 }

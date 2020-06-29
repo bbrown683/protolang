@@ -1,0 +1,4 @@
+package com.test
+
+let main argv = 
+    System.out.println("Hello World")

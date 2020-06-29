@@ -2,43 +2,61 @@ grammar Spark;
 
 translationUnit : declaration EOF;
 
-declaration : (annotationDeclaration
-    | enumDeclaration
-    | functionDeclaration 
-    | importDeclaration 
-    | objectDeclaration
+declaration : (
+    // annotationDeclaration
+    functionDeclaration 
+    // | importDeclaration 
+    // | objectDeclaration
     | packageDeclaration)+;
 
-annotationDeclaration : AT IDENTIFIER;
+// annotationDeclaration : AT IDENTIFIER;
 
-enumDeclaration : accessModifier ENUM IDENTIFIER EQUALS (PIPE? enumField) (PIPE enumField)*;
-enumField : IDENTIFIER (LPAREN IDENTIFIER RPAREN)?;
+functionDeclaration : LET IDENTIFIER (IDENTIFIER)* ARROW? EQUALS functionBody;
+functionBody : IF;
 
-functionDeclaration : LET IDENTIFIER (IDENTIFIER)* ARROW? EQUALS;
+// objectDeclaration : accessModifier objectType IDENTIFIER constructorDeclaration? EQUALS objectBody;
+// objectBody : 
+    // | unionDeclaration
+    // | objectMemberDeclaration*;
+// objectMemberDeclaration : accessModifier THIS PERIOD IDENTIFIER;
 
-objectDeclaration : accessModifier objectType IDENTIFIER constructorDeclaration? EQUALS objectBody;
-objectBody : objectMemberDeclaration*;
-objectMemberDeclaration : accessModifier THIS PERIOD IDENTIFIER;
+// unionDeclaration : (PIPE? unionField) (PIPE unionField)*;
+// unionField : IDENTIFIER (OF IDENTIFIER)?;
 
-variableDeclaration : accessModifier IDENTIFIER IDENTIFIER;
+// variableDeclaration : accessModifier IDENTIFIER IDENTIFIER;
 
-constructorDeclaration : LPAREN (annotationDeclaration* IDENTIFIER COLON IDENTIFIER)* RPAREN;
+// constructorDeclaration : LPAREN (annotationDeclaration* IDENTIFIER COLON IDENTIFIER)* RPAREN;
 
 importDeclaration : IMPORT path;
 packageDeclaration : PACKAGE path;
 path : (IDENTIFIER PERIOD)* IDENTIFIER;
 
 statement : 
+    | flowStatement;
+
+flowStatement : 
     | FOR forExpression IN statement
     | IF expression THEN statement (ELSE IF expression)* (ELSE statement)?
     | WHILE expression DO statement;
 
-forExpression :
-	| IDENTIFIER ':' IDENTIFIER;
+forExpression : IDENTIFIER ':' IDENTIFIER;
 
 expression :
-    | expression symbol=(ASTERISK | SLASH | PERCENT) expression
-    | expression symbol=(PLUS | HYPHEN) expression;
+    | IDENTIFIER arithmeticOperator IDENTIFIER;
+
+arithmeticOperator : 
+    | PLUS
+    | HYPHEN
+    | ASTERISK
+    | SLASH
+    | PERCENT;
+
+unaryOperator : 
+    | PLUS
+    | HYPHEN
+    | PLUS PLUS
+    | HYPHEN HYPHEN
+    | EXCLAMATION;
 
 primitive : 
     | BOOLEAN
@@ -66,7 +84,6 @@ ANNOTATION : 'annotation';
 CATCH : 'catch';
 DO : 'do';
 ELSE : 'else';
-ENUM : 'enum';
 FOR : 'for';
 IF : 'if';
 IN : 'in';
@@ -74,8 +91,10 @@ IMPORT : 'import';
 INTERFACE : 'interface';
 LET : 'let';
 MATCH : 'match';
+MUTABLE : 'mutable';
 NEW : 'new';
 OBJECT : 'object';
+OF : 'of';
 PACKAGE : 'package';
 PRIVATE : 'private';
 PROTECTED : 'protected';
@@ -101,6 +120,7 @@ AT : '@';
 ARROW : '->';
 ASTERISK : '*';
 COLON : ':';
+EXCLAMATION : '!';
 EQUALS : '=';
 HYPHEN : '-';
 LPAREN : '(';

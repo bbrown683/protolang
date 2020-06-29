@@ -12,7 +12,7 @@ import io.github.bbrown683.spark.antlr4.SparkParser;
 public class Main {
     public static void main(String[] args) {
         try {
-        	CharStream charStream = CharStreams.fromStream(System.in);
+            CharStream charStream = CharStreams.fromStream(System.in);
             var lexer = new SparkLexer(charStream);
             var tokenStream = new CommonTokenStream(lexer);
             var parser = new SparkParser(tokenStream);
